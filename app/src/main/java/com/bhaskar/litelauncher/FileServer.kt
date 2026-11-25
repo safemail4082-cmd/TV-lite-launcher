@@ -8,12 +8,17 @@ import java.io.File
 object FileServer {
     private var server: Srv? = null
     private lateinit var ctx: Context
+    var port = 0
+        private set
 
+    /** Tries ports 8765-8770 so it never clashes with other apps already using 8080. */
     fun start(c: Context) {
         ctx = c.applicationContext
         if (server != null) return
-        val s = Srv()
-        try { s.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false); server = s } catch (e: Exception) { server = null }
+        for (p in 8765..8770) {
+            val s = Srv(p)
+            try { s.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false); server = s; port = p; return } catch (e: Exception) { }
+        }
     }
 
     /** USB/SD first (FromPhone folder at its root, else app folder on it), otherwise internal Downloads/FromPhone. */
@@ -48,7 +53,7 @@ async function go(){
 }
 </script></body>"""
 
-    class Srv : NanoHTTPD(8080) {
+    class Srv(p: Int) : NanoHTTPD(p) {
         override fun serve(s: IHTTPSession): Response {
             if (s.method == Method.POST) {
                 val files = HashMap<String, String>()

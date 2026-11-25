@@ -333,17 +333,18 @@ class MainActivity : Activity() {
     }
 
     private fun sendDialog() {
+        FileServer.start(this)
         val ip = ip()
         val col = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL
             setPadding(dp(24), dp(12), dp(24), dp(4))
         }
         val msg = TextView(this).apply { textSize = 16f; gravity = Gravity.CENTER; setTextColor(Color.WHITE) }
-        if (ip != null) {
-            val url = "http://$ip:8080"
+        if (ip != null && FileServer.port > 0) {
+            val url = "http://$ip:${FileServer.port}"
             col.addView(ImageView(this).apply { setImageBitmap(qr(url)) }, LinearLayout.LayoutParams(dp(220), dp(220)))
             msg.text = "Scan with your phone camera, or open\n$url\n(phone and TV on the same Wi-Fi)\n\nSaved to: ${FileServer.targetDir().absolutePath}"
-        } else msg.text = "Connect the TV to Wi-Fi first."
+        } else msg.text = if (ip == null) "Connect the TV to Wi-Fi first." else "File server could not start. Restart the TV and try again."
         col.addView(msg)
         dlg("Send files from phone").setView(col).setPositiveButton("Close", null).show()
     }
