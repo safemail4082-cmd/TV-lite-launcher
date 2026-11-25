@@ -9,8 +9,8 @@ android {
         applicationId = "com.bhaskar.litelauncher"
         minSdk = 21
         targetSdk = 28
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "2.0"
     }
     // Fixed key so every GitHub build has the same signature and installs as an update
     signingConfigs {
@@ -42,4 +42,5 @@ android {
 }
 dependencies {
     implementation("org.nanohttpd:nanohttpd:2.3.1")
+    implementation("com.google.zxing:core:3.5.2")
 }
